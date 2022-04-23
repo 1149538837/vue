@@ -9,7 +9,7 @@
       <input type="number" placeholder="password" v-model="password" />
       <input type="email" placeholder="email" v-model="email" />
       <button @click="add">添加</button>
-      <button @click="update"></button>
+      <!-- <button @click="update">修改</button> -->
     </div>
   </div>
 </template>
@@ -28,38 +28,38 @@ export default {
     };
   },
   created() {
-    this.$axios.get("http://127.0.0.1:8000/select").then((res) => {
+    this.$axios.get("http://127.0.0.1:8001/select").then((res) => {
       console.log(res);
       this.data = res.data;
     });
   },
   methods: {
     add: function () {
-      axios({
-        url: "http://127.0.0.1:8000/add",
-        method: "post",
-        data: {
-          username: this.username,
-          password: this.password,
-          email: this.email,
-        },
-        //将json数据转化为表单数据
-         transformRequest: [
-          function (data) {
-            console.log(this.data)
-            let ret = "";
-            for (let it in data) {
-              ret +=
-                encodeURIComponent(it) +
-                "=" +
-                encodeURIComponent(data[it]) +
-                "&";
-            }
-            return ret;
-          },
-        ], 
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
+      // axios({
+      //   url: "http://127.0.0.1:8001/add",
+      //   method: "post",
+      //   data: {
+      //     username: this.username,
+      //     password: this.password,
+      //     email: this.email,
+      //   },
+      //   //将json数据转化为表单数据
+      //    transformRequest: [
+      //     function (data) {
+      //       console.log(this.data)
+      //       let ret = "";
+      //       for (let it in data) {
+      //         ret +=
+      //           encodeURIComponent(it) +
+      //           "=" +
+      //           encodeURIComponent(data[it]) +
+      //           "&";
+      //       }
+      //       return ret;
+      //     },
+      //   ], 
+      //   headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      // });
     },
   },
 };

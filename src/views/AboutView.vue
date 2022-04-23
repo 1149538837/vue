@@ -4,11 +4,40 @@
       <div class="welcome">
         <div :class="pinkbox">
           <!-- 注册 -->
-          <div class="signup nodisplay">
+          <div class="signup" :class="nodisplay1">
+            <h1>快速登录</h1>
+            <form class="more-padding" autocomplete="off" method="post">
+              <input type="username" name="username" placeholder="账号" />
+              <input type="password" name="password" placeholder="密码" />
+              <div style="display: flex">
+                <input
+                  type="text"
+                  name="code"
+                  placeholder="验证码"
+                  style=" width: 100px; height: 40px; padding: 0px; text-indent: 10px; margin-left: 15px; margin-top: 10px;"
+                />
+                <img
+                  src="../assets/tb.png"
+                  style=" width: 200px; height: 50px; margin-top: 10px;margin-left: -20px;"/>
+              </div>
+              <!-- @if(session()->has('error'))
+                        <li class="errors" style="">{{session()->get('error')}}</li>
+                    @endif -->
+              <div class="checkbox">
+                <input type="checkbox" id="remember" /><label for="remember"
+                  >记住我</label
+                >
+              </div>
+              <button class="button sumbit" @click="login">登录</button>
+            </form>
+          </div>
+
+          <!-- 登录 -->
+          <div class="signin" :class="nodisplay">
             <h1>快速注册</h1>
             <form autocomplete="off" method="post">
-              <input type="text" name="username" placeholder="账号" />
-              <input type="email" name="email" placeholder="邮箱" />
+              <input type="text" name="username1" placeholder="账号" />
+              <input type="email" name="email1" placeholder="邮箱" />
               <input type="password" name="password1" placeholder="密码" />
               <input type="password" name="password2" placeholder="重复密码" />
               <!-- @if(session()->has('errors'))
@@ -20,64 +49,22 @@
               </button>
             </form>
           </div>
-
-          <!-- 登录 -->
-          <div class="signin">
-            <h1>快速登录</h1>
-            <form class="more-padding" autocomplete="off" method="post">
-              <input type="username" name="username" placeholder="账号" />
-              <input type="password" name="password" placeholder="密码" />
-              <div style="display: flex">
-                <input
-                  type="text"
-                  name="code"
-                  placeholder="验证码"
-                  style="
-                    width: 100px;
-                    height: 40px;
-                    padding: 0px;
-                    text-indent: 10px;
-                    margin-left: 15px;
-                    margin-top: 10px;
-                  "
-                />
-                <img
-                  src="../assets/tb.png"
-                  style="
-                    width: 200px;
-                    height: 50px;
-                    margin-top: 10px;
-                    margin-left: -20px;
-                  "
-                />
-              </div>
-              <!-- @if(session()->has('error'))
-                        <li class="errors" style="">{{session()->get('error')}}</li>
-                    @endif -->
-              <div class="checkbox">
-                <input type="checkbox" id="remember" /><label for="remember"
-                  >记住我</label
-                >
-              </div>
-              <button class="button sumbit" onclick="">登录</button>
-            </form>
-          </div>
         </div>
 
         <div class="leftbox">
           <h2 class="title"><span>查询</span>&购票</h2>
           <p class="desc">我们要做最好的 <span>购票网站</span></p>
           <img class="flower smaller" src="../assets/login.jpg" />
-          <p class="account">已经有账号了？</p>
-          <button class="button" id="signin" @click="sigin">登录</button>
+          <p class="account">还没有注册？</p>
+          <button class="button" id="signup" @click="signup">注册</button>
         </div>
 
         <div class="rightbox">
           <h2 class="title"><span>电影</span>&演出</h2>
           <p class="desc">我们有最全的 <span>电影</span></p>
           <img class="flower" src="../assets/login.jpg" />
-          <p class="account">还没有注册？</p>
-          <button class="button" id="signup" @click="signup">注册</button>
+          <p class="account">已经有账号了？</p>
+          <button type="button" class="button" id="signin" @click="signin">登录</button>
         </div>
       </div>
     </div>
@@ -85,18 +72,63 @@
 </template>
 <script>
 export default {
-    data() {
-      return {
-        pinkbox: "pinkbox0",
-      };
-    },
-    methods: {
-    signup() {
+  data() {
+    return {
+      pinkbox: "pinkbox1",
+      nodisplay: "nodisplay1",
+      nodisplay1: "nodisplay0",
+      username: "",
+      password: "",
+      email: "",
+    };
+  },
+  methods: {
+    signin() {
       this.pinkbox = "pinkbox1";
+      this.nodisplay = "nodisplay1"
+      this.nodisplay1 = "nodisplay0"
     },
 
-    sigin() {
-        this.pinkbox = "pinkbox0";
+    signup() {
+      this.pinkbox = "pinkbox0";
+      this.nodisplay = "nodisplay0"
+      this.nodisplay1 = "nodisplay1"
+    },
+    login() {
+      // this.$cookies.set('fileInfoId', to.query.fileInfoId)
+      axios({
+        url: "http://127.0.0.1:8001/login",
+        method: "post",
+        data: {
+          username: this.username,
+          password: this.password,
+        },
+        //将json数据转化为表单数据
+        transformRequest: [
+          function (data) {
+            console.log(this.data);
+            let ret = "";
+            for (let it in data) {
+              ret +=
+                encodeURIComponent(it) +
+                "=" +
+                encodeURIComponent(data[it]) +
+                "&";
+            }
+            return ret;
+          },
+        ],
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        success(res) {
+         localStorage.setItem("token",1)
+         console.log(res)
+        },
+      });
+      // 直接跳转
+      // this.$router.push("/index");
+      // 带参数跳转
+      // this.$router.push({path:'/testDemo',query:{setid:123456}});
+      // this.$router.push({name:'testDemo',params:{setid:111222}});
     },
   },
 };
@@ -105,9 +137,6 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400|Lora");
 
-body {
-  background: #cbc0d3;
-}
 .container {
   margin: auto;
   width: 800px;
@@ -152,9 +181,12 @@ body {
   transform: translateX(0%);
 }
 
-.nodisplay {
+.nodisplay1 {
   display: none;
   transition: all 0.5s ease;
+}
+.nodisplay0 {
+
 }
 
 .leftbox,
